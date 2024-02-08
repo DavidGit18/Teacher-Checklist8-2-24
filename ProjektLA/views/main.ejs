@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/styles/style.css">
+    <script src="https://kit.fontawesome.com/1ccc5c4e9a.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <h1>Teacher Checklist</h1>
+    
+    <button id="logout" onclick="window.location.href = '/logout'">
+        Odhlásit
+    </button>
+   
+
+
+    <form action="/" method="post">
+        <label for="task">Task:</label>
+        <input type="text" name="task" id="task" placeholder="Enter a task" required maxlength="50">
+        <label for="datetime">Deadline (Date and Time):</label>
+        <input type="datetime-local" id="datetime" name="datetime" required onkeydown="return false;">
+        <label for="priority">Priority:</label>
+        <select name="priority" id="priority">
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+        </select>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <div class="task-tables">
+        <!-- Sort and render To-Do tasks by deadline and priority -->
+        <table id="todoTable">
+            <thead>
+                <tr>
+                    <th>To-Do Tasks (By Deadline and Priority)</th>
+                </tr>
+            </thead>
+            <tbody id="todoTasks">
+                <!-- Sort the To-Do tasks by deadline and priority -->
+                <% todoTasks
+                    .sort((a, b) => {
+                        // First, compare by deadline
+                        const deadlineComparison = new Date(a.deadline) - new Date(b.deadline);
+                        if (deadlineComparison !== 0) {
+                            return deadlineComparison;
+                        }
+                        // If deadlines are equal, compare by priority
+                        return a.priority.localeCompare(b.priority);
+                    })
+                    .forEach(function (task) { %>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="task-checkbox" <% if (task.is_completed) { %>checked<% } %>
+                                data-task-id="<%= task.id %>">
+                            <%= task.tasks %> (Deadline: <%= task.deadline %>, Priority: <%= task.priority %>)
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    
+        <!-- Sort and render Done tasks by deadline -->
+        <table id="doneTable">
+            <thead>
+                <tr>
+                    <th>Done Tasks (By Deadline)</th>
+                </tr>
+            </thead>
+            <tbody id="doneTasks">
+                <!-- Sort the Done tasks by deadline -->
+                <% doneTasks
+                    .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
+                    .forEach(function (task) { %>
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="task-checkbox" data-task-id="<%= task.id %>">
+                            <%= task.tasks %> (Deadline: <%= task.deadline %>, Priority: <%= task.priority %>)
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+     
+
+    <div class="tlacitkoToDo">
+    <button id="toggleTasksButton">Toggle Tasks</button>
+    <button id="checkAllTodoButton">Check All To-Do</button>
+    <button id="uncheckAllTodoButton">Uncheck All To-Do</button>
+    </div>
+    
+    <div class="tlacitkoDone">
+        <button id="checkAllDoneButton">Check All Done</button>
+        <button id="uncheckAllDoneButton">Uncheck All Done</button>
+        <button id="deleteSelected">Delete selected</button>
+    </div>
+
+     <!-- button NOTIFICATION -->
+
+     <div class="buttonNot">
+        <button onclick="showTasks(uncomplMsg)">Show Tasks</button>
+    </div>
+
+    <div id="notification"></div>
+<!-- end- button NOTIFICATION -->
+
+    <script>
+
+document.getElementById("task").addEventListener("input", function(event) {
+        var inputValue = event.target.value;
+        var sanitizedValue = inputValue.replace(/[^\p{L}\p{M}0-9]/gu, '');
+        if (inputValue !== sanitizedValue) {
+            event.target.value = sanitizedValue;
+            alert("Název nesmí obsahovat speciální znaky.");
+            }
+        });
+
+// ---------------------------------------NOTIFIKACE-------------------------------------------------------
+document.addEventListener('DOMContentLoaded', function () {
+    const showTasksButton = document.querySelector('.buttonNot button');
+
+    showTasksButton.addEventListener('mouseover', function () {
+        // Načtení úkolů z databáze a zobrazení notifikace
+        fetch('/tasks')
+            .then(response => response.json())
+            .then(tasks => {
+                const uncomplMsg = generateNotificationMessage(tasks);
+                showTasks(uncomplMsg);
+            })
+            .catch(error => {
+                console.error('Error fetching tasks:', error);
+            });
+    });
+
+    document.addEventListener('click', function (event) {
+        // Skrýt notifikaci po kliknutí mimo tlačítko "Show tasks"
+        if (!showTasksButton.contains(event.target)) {
+            hideNotification();
+        }
+    });
+
+    function showTasks(uncomplMsg) {
+        let notific = document.createElement('div');
+        notific.classList.add('notific');
+        
+        // Přímé vložení HTML obsahu do notifikace
+        notific.innerHTML = uncomplMsg;
+        
+        // Dynamické přizpůsobení výšky notifikace podle obsahu
+        notific.style.height = 'auto';
+        
+        notification.appendChild(notific);
+        setTimeout(() => {
+            notific.remove();
+        }, 6000);
+    }
+
+    function hideNotification() {
+        // Skrytí notifikace
+        const notific = document.querySelector('.notific');                                                    
+        if (notific) {
+            notific.remove();
+        }
+    }
+
+    function generateNotificationMessage(tasks) {
+        // Vytvoření textu notifikace z načtených úkolů
+        let message = '<i class="fa-solid fa-circle-info"></i> Tasks: ';
+        if (tasks.length === 0) {
+            message += 'No tasks available.';
+        } else {
+            // Generování seznamu úkolů v HTML
+            message += '<ul>';
+            tasks.forEach(task => {
+                const daysLeft = calculateDaysLeft(task.deadline);
+                message += `<li>${task.tasks} - Days left: ${daysLeft}, Priority: ${task.priority}</li>`;
+            });
+            message += '</ul>';
+        }
+        return message;
+    }
+
+    function calculateDaysLeft(deadline) {
+        // Výpočet zbývajících dnů k dokončení úkolu
+        const deadlineDate = new Date(deadline);
+        const currentDate = new Date();
+        const timeDifference = deadlineDate.getTime() - currentDate.getTime();
+        const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+        return daysLeft;
+    }
+});
+
+
+
+// ---------------------------------------KONEC NOTIFIKACE-------------------------------------------------------
+
+
+        
+        // ----------------------------------TLACITKO PRO SMAZANI ZAZNAMU V TO-DO TASK A DONE TASK-------------------
+       // Přidat posluchač události na tlačítko "Delete Selected"
+document.getElementById('deleteSelected').addEventListener('click', function () {
+  // Získat všechny označené checkboxy v obou sekcích (To-Do Task a Done Task)
+  const todoCheckboxes = document.querySelectorAll('#todoTable input.task-checkbox:checked');
+  const doneCheckboxes = document.querySelectorAll('#doneTable input.task-checkbox:checked');
+
+  const allCheckboxes = [...todoCheckboxes, ...doneCheckboxes]; // Sloučit všechny označené checkboxy
+
+  allCheckboxes.forEach(function (checkbox) {
+    const parentRow = checkbox.parentElement.parentElement;
+    const taskId = checkbox.getAttribute('data-task-id');
+
+    // Smazat záznam pomocí Fetch
+    fetch(`/delete/${taskId}`, {
+      method: 'POST',
+    }).then(response => {
+      if (response.ok) {
+        // Odebrat záznam ze seznamu (buď To-Do Task nebo Done Task)
+        parentRow.remove();
+      } else {
+        console.error('Error deleting the task in the database');
+      }
+    }).catch(error => {
+      console.error('Fetch error:', error);
+    });
+  });
+});
+        // ----------------------------------KONEC-->TLACITKO PRO SMAZANI ZAZNAMU V TO-DO TASK A DONE TASK-------------------
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButton = document.getElementById('toggleTasksButton');
+            const todoTasks = document.getElementById('todoTasks');
+            const doneTasks = document.getElementById('doneTasks');
+
+            toggleButton.addEventListener('click', function () {
+    const tasks = document.querySelectorAll('input.task-checkbox');
+    tasks.forEach(function (task) {
+        if (task.checked) {
+            const parentRow = task.parentElement.parentElement;
+            const taskId = task.getAttribute('data-task-id');
+
+            // Update the task status in the database to 1 (completed)
+            fetch(`/update/${taskId}?completed=1`, {
+                method: 'POST',
+            }).then(response => {
+                if (response.ok) {
+                    const doneClone = parentRow.cloneNode(true);
+                    doneTasks.appendChild(doneClone);
+
+                    // Remove the task from the "To-Do" section
+                    parentRow.remove();
+                } else {
+                    console.error('Error updating task status in the database');
+                }
+            }).catch(error => {
+                console.error('Fetch error:', error);
+                        });
+                    }
+                });
+            });
+
+const checkAllTodoButton = document.getElementById('checkAllTodoButton');
+const uncheckAllTodoButton = document.getElementById('uncheckAllTodoButton');
+const checkAllDoneButton = document.getElementById('checkAllDoneButton');
+const uncheckAllDoneButton = document.getElementById('uncheckAllDoneButton');
+// const deleteChecked = document.getElementById('deleteSelected');
+
+
+checkAllTodoButton.addEventListener('click', function () {
+    // Select all checkboxes in the "To-Do" section
+    const todoCheckboxes = document.querySelectorAll('#todoTasks input.task-checkbox');
+    todoCheckboxes.forEach(checkbox => {
+        checkbox.checked = true;
+    });
+});
+
+uncheckAllTodoButton.addEventListener('click', function () {
+    // Deselect all checkboxes in the "To-Do" section
+    const todoCheckboxes = document.querySelectorAll('#todoTasks input.task-checkbox');
+    todoCheckboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+});
+
+checkAllDoneButton.addEventListener('click', function () {
+    // Select all checkboxes in the "Done" section
+    const doneCheckboxes = document.querySelectorAll('#doneTasks input.task-checkbox');
+    doneCheckboxes.forEach(checkbox => {
+        checkbox.checked = true;
+    });
+});
+
+uncheckAllDoneButton.addEventListener('click', function () {
+    // Deselect all checkboxes in the "Done" section
+    const doneCheckboxes = document.querySelectorAll('#doneTasks input.task-checkbox');
+    doneCheckboxes.forEach(checkbox => {
+        checkbox.checked = false;
+
+        const datetimeInput = document.getElementById('datetime');
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const currentDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        datetimeInput.setAttribute('min', currentDatetime);
+                });
+            });
+
+            
+        });
+    </script>
+</body>
+</html>

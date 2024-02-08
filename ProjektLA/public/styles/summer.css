@@ -1,0 +1,230 @@
+body{
+  background-image: url('https://s1.picswalls.com/wallpapers/2014/02/08/latest-summer-wallpaper_032156951_26.png'); /* Změňte cestu k vašemu obrázku */;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+/* -------------------------------------------------------------------------------------------------*/
+h1 {
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 48px;
+  text-transform: uppercase;
+  color: rgb(0, 255, 242);
+}
+/* -------------------------------------------------------------------------------------------------*/
+
+/* Moderní podzimní styl pro formulář */
+form {
+text-align: center;
+margin: 15px 150px;
+background-color: rgba(0, 0, 0, 0.65); /* Průhledná šedá barva pozadí (RGBA) */
+padding: 50px 0px;
+border-radius: 10px;
+box-shadow: 0 0 10px rgba(0, 95, 102, 0.2); /* Hnědý odstín stínu */
+color: #333; /* Černá barva textu */
+}
+
+form label {
+
+color: transparent;
+background: #01e6e6; /* Barva pozadí popisku */
+background-clip: text;
+-webkit-background-clip: text;
+animation: text-shadow-flicker 3s infinite;
+}
+
+form input[type="text"],
+form select,
+form input[type="datetime-local"] {
+margin: 10px;
+padding: 10px;
+background-color: rgba(244, 244, 244, 0.9); /* Průhledná šedá barva pro vstupy (RGBA) */
+color: #333;
+border: 1px solid #ccc;
+border-radius: 5px;
+outline: none;
+}
+
+form button {
+margin: 10px;
+padding: 10px;
+background-color: rgb(11, 126, 155);  /* Hnědá barva pro tlačítko */
+color: #fff; /* Bílá barva textu tlačítka */
+border: none;
+border-radius: 5px;
+outline: none;
+transition: background-color 0.3s;
+}
+
+form button:hover {
+border-bottom-left-radius:2px;
+border-bottom-right-radius:2px;
+border-top-left-radius:2px;
+border-top-right-radius:2px;
+box-shadow: inset 1px 1px 2px rgba(255,255,255,0.3), 
+            inset 3px 15px 45px rgba(0,0,0,0.2),
+            inset -1px -1px 2px rgba(0,0,0,0.5), 
+            inset -3px -15px 45px rgba(255,255,255,0.1),
+       1px -1px 4px 1px rgb(0, 238, 255),
+      1px -1px 12px 3px rgb(0, 162, 255),
+      1px -1px 30px 4px rgb(0, 81, 255);
+      transition: 0.1s ease-in; 
+}
+
+/* Klíčové snímky pro animaci podzimního efektu */
+@keyframes autumn-fall {
+0% {
+    transform: translateY(-30px);
+}
+100% {
+    transform: translateY(0);
+}
+}
+/* -------------------------------------------------------------------------------------------------*/
+/* Animace pro vstupy */
+form input[type="text"],
+form input[type="date"],
+form select {
+animation: autumn-fall 0.5s ease;
+}
+
+/* .obalTlacitek{
+text-align: right;
+} */
+
+.task-tables {
+display: flex;
+justify-content: space-between;
+}
+
+#doneTable,
+#todoTable {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px;
+  background: rgba(40, 124, 121, 0.5); /* Průhledné pozadí s bílou barvou (RGBA) */
+  box-shadow: 0 0 10px rgba(3, 22, 24, 0.2);
+  border-radius: 10px;
+}
+
+#doneTable th,
+#todoTable th {
+  background-color: rgba(7, 70, 68, 0.8); /* Barva pozadí záhlaví tabulky s průhledností (RGBA) */
+  color: white;
+  text-align: left;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  box-shadow: 0 5px 4px -2px rgb(8, 46, 56);
+}
+
+#doneTable th,
+#doneTable td,
+#todoTable th,
+#todoTable td {
+  padding: 10px; /* Odsazení buněk tabulky */
+}
+
+#doneTable tr:nth-child(even),
+#todoTable tr:nth-child(even) {
+  color:#ffffff;
+  border-bottom-left-radius: 10px; /* Zaoblený horní levý roh záhlaví tabulky */
+  border-bottom-right-radius: 10px; /* Zaoblený horní pravý roh záhlaví tabulky */
+}
+/* background-color: #cf2608; */
+
+#doneTable tr:nth-child(odd),
+#todoTable tr:nth-child(odd) {
+  color:#ffffff;
+}
+
+#todoTable tbody tr:last-child {
+border-bottom-left-radius: 10px;
+border-bottom-right-radius: 10px;
+}
+
+
+/* -------------------------------------------------------------------------------------------------*/
+/* Styl pro tlačítka */
+button#toggleTasksButton,
+button#checkAllTodoButton,
+button#uncheckAllTodoButton,
+button#checkAllDoneButton,
+button#uncheckAllDoneButton,
+button#deleteSelected {
+  background-color: rgb(11, 126, 155); 
+  color: #a5e6e0;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 10px ;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.tlacitkoToDo {
+float: left; /* Levá strana */
+margin: 0 130px; /* Mezera mezi tlačítky */
+}
+
+.tlacitkoDone {
+float: right; /* Pravá strana */
+margin: 0 130px; /* Mezera mezi tlačítky */
+}
+/* -------------------------------------------------------------------------------------------------*/
+/* Změna barvy checkboxu */
+/* #doneTable input[type="checkbox"],
+#todoTable input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  -webkit-appearance: none; 
+  appearance: none; 
+  background-color: #d46835; 
+  border: 1px solid #5f1a08;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-right: 5px;
+} */
+
+/* Ikona zaškrtávacího checkboxu */
+/* #doneTable input[type="checkbox"]::before,
+#todoTable input[type="checkbox"]::before {
+  content: "✔"; 
+  display: inline-block;
+  font-size: 16px; 
+  line-height: 20px; 
+  text-align: center;
+  color: #ff2600; 
+} */
+/* -------------------------------------------------------------------------------------------------*/
+
+button#toggleTasksButton:hover, 
+button#checkAllTodoButton:hover,
+button#uncheckAllTodoButton:hover,
+button#checkAllDoneButton:hover,
+button#uncheckAllDoneButton:hover,
+button#deleteSelected:hover {
+border-bottom-left-radius:2px;
+border-bottom-right-radius:2px;
+border-top-left-radius:2px;
+border-top-right-radius:2px;
+box-shadow: inset 1px 1px 2px rgba(255,255,255,0.3), 
+            inset 3px 15px 45px rgba(0,0,0,0.2),
+            inset -1px -1px 2px rgba(0,0,0,0.5), 
+            inset -3px -15px 45px rgba(255,255,255,0.1),
+            1px -1px 4px 1px rgb(0, 238, 255),
+            1px -1px 12px 3px rgb(0, 162, 255),
+            1px -1px 30px 4px rgb(0, 81, 255);
+      transition: 0.1s ease-in; 
+}
+#doneTable::before {
+top: 0;
+left: 0;
+animation: fall-leaves-left 10s linear infinite;
+}
+
+#todoTable::before {
+top: 0;
+right: 0;
+animation: fall-leaves-right 10s linear infinite;
+}
+
+

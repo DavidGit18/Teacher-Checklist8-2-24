@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>OČI</h1>
+    <canvas id="myCanvas" width="750" height="600" style="border:1px solid #d3d3d3;"></canvas>
+    <script>
+        var radius = <%= radius !== undefined ? radius : 250 %>;
+        var length = <%= length !== undefined ? length : 30 %>;
+        var radius2 = <%= radius2 !== undefined ? radius2 : 30 %>;
+
+        // Pokračujte s kódem vykreslování podle potřeby
+        var canvas = document.getElementById("myCanvas");
+        var context = canvas.getContext("2d");
+
+        // Vykreslit kruh
+        context.beginPath();
+        context.arc(canvas.width / 2, canvas.height / 2, radius, 0, 2 * Math.PI, false);
+        context.fillStyle = "#0040ff";
+        context.fill();
+        context.lineWidth = 5;
+        context.strokeStyle = "black";
+        context.stroke();
+
+        // Vykreslit dvě bílé oči
+        for (var i = 0; i < 2; i++) {
+            context.beginPath();
+            // Poloha bílého kruhu v rámci většího kruhu
+            var angle = (i * Math.PI) - Math.PI / 360; // Úprava úhlu pro "oči"
+            var x = canvas.width / 2 + Math.cos(angle) * (radius - radius2 * 5); // Úprava polohy očí
+            var y = canvas.height / 2.5 + Math.sin(angle) * (radius - radius2 * 10);
+            
+            context.arc(x, y, radius2, 0, 2 * Math.PI, false);
+            context.fillStyle = "#00bfff";
+            context.fill();
+            context.lineWidth = 5;
+            context.strokeStyle = "black";
+            context.stroke();
+        }
+
+        // Vykreslit úsměv
+        context.beginPath();
+        context.arc(canvas.width / 2, canvas.height / 1.7, radius - radius2 * 5, 0, Math.PI, false);
+        context.fillStyle = "#00bfff";
+        context.fill();
+        context.lineWidth = 5;
+        context.strokeStyle = "black";
+        context.stroke();
+
+    </script>
+</body>
+</html>
